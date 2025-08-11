@@ -655,3 +655,14 @@ docker-compose ps
 
 # Ver uso de recursos
 docker stats
+# Evidencia del despliegue
+Se inserta la los datos en la colleccion
+<img width="1914" height="1524" alt="image" src="https://github.com/user-attachments/assets/74d25e0f-db29-4679-92ff-35859924418e" />
+- Se lista cliente por pais
+<img width="762" height="1404" alt="image" src="https://github.com/user-attachments/assets/25fb78f7-6d03-4110-912a-e2198381698f" />
+- Actualizar el correo electrónico de un cliente.
+<img width="730" height="1206" alt="image" src="https://github.com/user-attachments/assets/3e2e6c55-6378-41e5-a701-32e82cd17d33" />
+
+
+
+
