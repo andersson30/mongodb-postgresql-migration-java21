@@ -1,14 +1,15 @@
 version: '3.9'
 services:
   # MongoDB Database
-  mongo-server:
+  mongodb-server:
     image: mongo:latest
-    container_name: mongo-server
+    container_name: mongodb-server
     restart: always
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+      - ../mongodb:/docker-entrypoint-initdb.d
     networks:
       - migration_network
 
@@ -18,9 +19,9 @@ services:
     container_name: mongo-client
     restart: always
     depends_on:
-      - mongo-server
+      - mongodb-server
     environment:
-      - ME_CONFIG_MONGODB_SERVER=mongo-server
+      - ME_CONFIG_MONGODB_SERVER=mongodb-server
       - ME_CONFIG_MONGODB_PORT=27017
       - ME_CONFIG_BASICAUTH_USERNAME=admin
       - ME_CONFIG_BASICAUTH_PASSWORD=admin123

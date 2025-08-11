@@ -123,31 +123,19 @@ $$ LANGUAGE plpgsql;
 
 -- Función para obtener estadísticas de migración
 CREATE OR REPLACE FUNCTION obtener_estadisticas_migracion()
-RETURNS TEXT AS $$
-DECLARE
-    v_total_clientes INTEGER;
-    v_total_direcciones INTEGER;
-    v_total_paises INTEGER;
-    v_total_ciudades INTEGER;
-    v_resultado TEXT;
+RETURNS TABLE(
+    total_clientes BIGINT,
+    total_direcciones BIGINT,
+    paises_unicos BIGINT,
+    ciudades_unicas BIGINT
+) AS $$
 BEGIN
-    -- Contar clientes
-    SELECT COUNT(*) INTO v_total_clientes FROM clientes;
-    
-    -- Contar direcciones
-    SELECT COUNT(*) INTO v_total_direcciones FROM direcciones;
-    
-    -- Contar países únicos
-    SELECT COUNT(DISTINCT pais) INTO v_total_paises FROM direcciones;
-    
-    -- Contar ciudades únicas
-    SELECT COUNT(DISTINCT ciudad) INTO v_total_ciudades FROM direcciones;
-    
-    -- Construir resultado
-    v_resultado := format('Estadísticas de migración: %s clientes, %s direcciones, %s países, %s ciudades',
-                         v_total_clientes, v_total_direcciones, v_total_paises, v_total_ciudades);
-    
-    RETURN v_resultado;
+    RETURN QUERY
+    SELECT 
+        (SELECT COUNT(*) FROM clientes)::BIGINT as total_clientes,
+        (SELECT COUNT(*) FROM direcciones)::BIGINT as total_direcciones,
+        (SELECT COUNT(DISTINCT pais) FROM direcciones)::BIGINT as paises_unicos,
+        (SELECT COUNT(DISTINCT ciudad) FROM direcciones)::BIGINT as ciudades_unicas;
 END;
 $$ LANGUAGE plpgsql;
 

@@ -488,6 +488,29 @@ __Placeholders para imágenes__
 ![Logs - Migración Camel](https://github.com/user-attachments/assets/b3e8c533-5a4a-45f1-a352-6aa9752cd4d5)
 ![PostgreSQL - Datos migrados](https://github.com/user-attachments/assets/bfa5bbe1-8159-42fc-a02a-e2b8b954a1dd)
 
+## CI/CD (GitHub Actions)
+
+Esta sección documenta el pipeline de Integración Continua definido en `/.github/workflows/ci.yml`.
+
+- __Disparadores__:
+  - Push y Pull Request a la rama `main` (ajustable en `on:` del workflow).
+- __Estrategia__:
+  - Java 21 con Temurin en Ubuntu runner.
+  - Maven sin output de transferencia (`-ntp`) y modo batch (`-B`).
+  - Uso de Testcontainers para MongoDB y PostgreSQL durante pruebas de integración.
+  - Publicación de artifacts (logs) para diagnóstico.
+### Flujo del pipeline
+
+1) __Checkout del repo__
+2) __Setup de JDK 21__ (Temurin)
+3) __Cache de Maven__ (`~/.m2/repository`) para acelerar builds
+4) __Compilación rápida__: `mvn -B -ntp -DskipTests package`
+5) __Pruebas unitarias__: `mvn -B -ntp test`
+6) __Pruebas de integración__: `mvn -B -ntp -DskipITs=false verify`
+7) __Publicación de logs ()__: artifact `app-logs` con contenido de `logs/**`
+
+
+
 ## Instalación y Configuración
 
 ### Prerrequisitos
@@ -543,15 +566,22 @@ docker-compose -f scripts/Docker/docker-compose.yml exec postgres-server \
   psql -U postgres -d techtest -f /docker-entrypoint-initdb.d/03-test-data.sql
 ```
 
-#### 4. Configurar MongoDB
+### 4. Configurar MongoDB
 ```bash
-# Conectar a MongoDB y ejecutar scripts
-docker-compose -f scripts/Docker/docker-compose.yml exec mongodb-server mongosh techtest
+# Iniciar los contenedores
+docker-compose -f scripts/Docker/docker-compose.yml up -d
 
-# Dentro de mongosh, ejecutar:
-load('/docker-entrypoint-initdb.d/01-create-collection.js')
-load('/docker-entrypoint-initdb.d/02-insert-data.js')
-exit
+# Verificar que los contenedores están ejecutándose
+docker-compose -f scripts/Docker/docker-compose.yml ps
+
+# Copiar script de inicialización al contenedor
+docker cp scripts/mongodb/01-create-collection.js mongo-server:/tmp/
+
+# Ejecutar script de inicialización MongoDB
+docker-compose -f scripts/Docker/docker-compose.yml exec mongo-server mongosh techtest /tmp/01-create-collection.js
+
+# Verificar que los datos se insertaron correctamente
+docker-compose -f scripts/Docker/docker-compose.yml exec mongo-server mongosh techtest --eval "db.clientes.countDocuments()"
 ```
 
 #### 5. Verificar Configuración
