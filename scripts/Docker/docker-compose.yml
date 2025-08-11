@@ -1,5 +1,6 @@
 version: '3.9'
 services:
+  # MongoDB Database
   mongo-server:
     image: mongo:latest
     container_name: mongo-server
@@ -9,8 +10,9 @@ services:
     volumes:
       - mongodb_data:/data/db
     networks:
-      - mongodb_network
+      - migration_network
 
+  # MongoDB Admin Interface
   mongo-client:
     image: mongo-express:latest
     container_name: mongo-client
@@ -20,13 +22,52 @@ services:
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongo-server
       - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
     ports:
       - "8081:8081"
     networks:
-      - mongodb_network
+      - migration_network
+
+  # PostgreSQL Database
+  postgres-server:
+    image: postgres:15
+    container_name: postgres-server
+    restart: always
+    environment:
+      - POSTGRES_DB=techtest
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+      - ../postgresql:/docker-entrypoint-initdb.d
+    networks:
+      - migration_network
+
+  # PostgreSQL Admin Interface
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: always
+    depends_on:
+      - postgres-server
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@techtest.com
+      - PGADMIN_DEFAULT_PASSWORD=admin123
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - migration_network
 
 volumes:
   mongodb_data:
+  postgresql_data:
+  pgadmin_data:
 
 networks:
-  mongodb_network:
+  migration_network:
+    driver: bridge

@@ -2,10 +2,10 @@
 -- Ejecutar con: psql -U postgres -d techtest -f scripts/postgresql/01-schema.sql
 
 -- Crear base de datos si no existe (ejecutar como superusuario)
--- CREATE DATABASE techtest;
+CREATE DATABASE techtest;
 
 -- Conectar a la base de datos techtest
-\c techtest;
+
 
 -- Eliminar tablas si existen (para re-ejecución del script)
 DROP TABLE IF EXISTS clientes CASCADE;
@@ -70,9 +70,5 @@ COMMENT ON TABLE direcciones IS 'Tabla de direcciones normalizadas';
 COMMENT ON COLUMN clientes.mongo_id IS 'ID original del documento en MongoDB';
 COMMENT ON COLUMN clientes.direccion_id IS 'Referencia a la tabla direcciones';
 
--- Mostrar estructura creada
-\dt
-\d clientes
-\d direcciones
 
-PRINT 'Schema PostgreSQL creado exitosamente';
+

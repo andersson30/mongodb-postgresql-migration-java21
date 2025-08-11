@@ -413,6 +413,84 @@ Versión: 1.0.0
 Fecha: 2025-08-11  
 Autor: Technical Test Implementation
 
+## Cumplimiento de requisitos y guía de entrega
+
+Esta sección mapea los requisitos del enunciado con lo implementado y provee los comandos exactos para validarlo y adjuntar evidencias.
+
+### Módulo 1: MongoDB y modelado
+- __Colección `clientes` con `direccion` embebida__: definida en `scripts/mongodb/01-create-collection.js` y poblada en `02-insert-data.js` (10 documentos).
+- __Consultas requeridas__:
+  - Listar clientes por país (ejemplo: España):
+    ```bash
+    docker-compose -f scripts/Docker/docker-compose.yml exec mongodb-server \
+      mongosh --quiet --eval "use techtest; db.clientes.find({ 'direccion.pais': 'España' }).pretty()"
+    ```
+  - Actualizar correo electrónico de un cliente (por nombre o _id):
+    ```bash
+    # Por nombre
+    docker-compose -f scripts/Docker/docker-compose.yml exec mongodb-server \
+      mongosh --quiet --eval "use techtest; db.clientes.updateOne({ nombre: 'Juan Pérez' }, { $set: { correo: 'juan.perez@nuevo.com' } })"
+
+    # Por _id (reemplazar <ID>)
+    docker-compose -f scripts/Docker/docker-compose.yml exec mongodb-server \
+      mongosh --quiet --eval "use techtest; db.clientes.updateOne({ _id: ObjectId('<ID>') }, { $set: { correo: 'nuevo@mail.com' } })"
+    ```
+- __Embebidos vs Referencias__: ver sección "Modelado en MongoDB: Embebidos vs Referencias" (ya incluida arriba).
+
+### Módulo 2: PostgreSQL y PL/pgSQL
+- __Tablas `clientes` y `direcciones` con FK__: definidas en `scripts/postgresql/01-schema.sql`.
+- __Funciones/Procedimientos__:
+  - Upsert de cliente y dirección: `upsert_cliente()` (y `upsert_direccion()`) en `scripts/postgresql/02-functions.sql`.
+  - Obtener clientes por país: `obtener_clientes_por_pais(pais TEXT)` en `02-functions.sql`.
+- __Datos de prueba__: `scripts/postgresql/03-test-data.sql`.
+- __Ejemplos de uso (en el contenedor)__:
+  ```bash
+  # Invocar upsert de un cliente (ejemplo)
+  docker-compose -f scripts/Docker/docker-compose.yml exec postgres-server \
+    psql -U postgres -d techtest -c "SELECT upsert_cliente('6899ebbedbc39a17b874e39a', 'Juan Pérez', 'juan.perez@nuevo.com', 'Calle Principal 123', 'Madrid', 'España');"
+
+  # Consultar clientes por país via procedimiento/función
+  docker-compose -f scripts/Docker/docker-compose.yml exec postgres-server \
+    psql -U postgres -d techtest -c "SELECT * FROM obtener_clientes_por_pais('España');"
+  ```
+
+### Módulo 3: Java + Apache Camel
+- __Lectura de MongoDB__, __transformación__ y __upsert en PostgreSQL__: definidos en `src/main/java/com/techtest/route/MigrationRoute.java`, `processor/ClienteProcessor.java` y `service/PostgreSQLService.java`.
+- __Logging y manejo de errores__: configurados vía Spring Boot logging y rutas Camel con dead-letter.
+- __Test__: ejecutar al menos uno para validar inserción de MongoDB → PostgreSQL:
+  ```bash
+  # Unit/integration tests
+  mvn test
+  # (Opcional) integración específica si aplica
+  mvn -Dtest=MigrationIntegrationTest test
+  ```
+
+### Módulo 4: Git y entrega
+- __Repositorio Git__: inicializado, commits semánticos y README completo.
+- __Instrucciones Docker/local__: ver secciones "Opción 1: Entorno Docker" y "Opción 2: Instalación Local".
+- __Compilar, correr y probar__: ver secciones "Ejecutar Migración" y "Testing".
+
+### Evidencia de migración exitosa
+Incluye en el README (debajo de esta sección) o en la sección "Evidencia del despliegue":
+- __Capturas MongoDB__ (Mongo Express):
+  - Inserción de 10 documentos en `techtest.clientes`.
+  - Consulta filtrando por país (p. ej., España).
+  - Actualización de correo de un cliente (antes/después si es posible).
+- __Logs de la aplicación__ (con Camel):
+  - Inicio de migración, procesamiento de clientes y estadísticas finales (ej.: "10 clientes, 10 direcciones, 5 países, 8 ciudades").
+- __Consulta en PostgreSQL__:
+  - Salida de `SELECT COUNT(*) FROM clientes;` y `SELECT COUNT(*) FROM direcciones;`.
+  - Muestra de `SELECT c.nombre, c.correo, d.calle, d.ciudad, d.pais FROM clientes c JOIN direcciones d ON c.direccion_id = d.id LIMIT 5;`.
+
+__Placeholders para imágenes__ (reemplaza las URLs al subir tus capturas):
+```markdown
+![MongoDB - Inserción de documentos](https://github.com/user-attachments/<insercion>.png)
+![MongoDB - Listado por país](https://github.com/user-attachments/<listar-por-pais>.png)
+![MongoDB - Actualización de correo](https://github.com/user-attachments/<actualizar-correo>.png)
+![Logs - Migración Camel](https://github.com/user-attachments/<logs-migracion>.png)
+![PostgreSQL - Datos migrados](https://github.com/user-attachments/<postgres-datos>.png)
+```
+
 ## Instalación y Configuración
 
 ### Prerrequisitos
@@ -669,76 +747,3 @@ networks:
 ```
 
 ### Comandos Útiles
-
-```bash
-# Ver logs de un servicio específico
-docker-compose logs -f mongodb-server
-docker-compose logs -f postgres-server
-
-# Ejecutar comandos en contenedores
-docker-compose exec mongodb-server mongosh techtest
-docker-compose exec postgres-server psql -U postgres -d techtest
-
-# Reiniciar un servicio específico
-docker-compose restart mongodb-server
-
-# Ver estado de todos los servicios
-docker-compose ps
-
-# Ver uso de recursos
-docker stats
-# Evidencia del despliegue
-Se inserta la los datos en la colleccion
-<img width="1914" height="1524" alt="image" src="https://github.com/user-attachments/assets/74d25e0f-db29-4679-92ff-35859924418e" />
-- Se lista cliente por pais
-<img width="762" height="1404" alt="image" src="https://github.com/user-attachments/assets/25fb78f7-6d03-4110-912a-e2198381698f" />
-- Actualizar el correo electrónico de un cliente.
-<img width="730" height="1206" alt="image" src="https://github.com/user-attachments/assets/3e2e6c55-6378-41e5-a701-32e82cd17d33" />
-
-
-
-
-
-```
-
-Follow these instructions to make the following change to my code document.
-
-Instruction: Agregar una sección breve al README explicando ventajas y desventajas de documentos embebidos vs referencias en MongoDB usando como ejemplo la colección `clientes` con `direccion` embebida de este proyecto, y su mapeo a PostgreSQL.
-
-Code Edit:
-```
-{{ ... }}
-
-## Modelado en MongoDB: Embebidos vs Referencias
-
-En este proyecto, la colección `clientes` en MongoDB almacena la dirección como un documento embebido (`direccion`) dentro del cliente. Durante la migración, se transforma a un modelo relacional en PostgreSQL donde `clientes.direccion_id` referencia a la tabla `direcciones`.
-
-- __Embebidos (como `clientes.direccion`)__
-  - Ventajas:
-    - Lecturas rápidas: una sola consulta devuelve el cliente con su dirección.
-    - Atomicidad: actualizaciones de cliente+dirección en una operación (a nivel de documento).
-    - Simplicidad: ideal para relaciones 1:1 o 1:pocos y datos que se consultan siempre juntos.
-  - Desventajas:
-    - Duplicación: si muchas personas comparten la misma dirección, se repite en múltiples documentos.
-    - Actualizaciones globales costosas: cambiar una calle común exige actualizar muchos documentos.
-    - Tamaño de documento: riesgo de crecer hacia el límite de 16MB si se embeben muchos subdocumentos.
-
-- __Referencias (colecciones separadas + `$lookup`)__
-  - Ventajas:
-    - Normalización: evita duplicados (una sola `direccion` referenciada por varios `clientes`).
-    - Mantenibilidad: actualizar una dirección se refleja en todos los clientes que la referencian.
-    - Escalabilidad: mejor para relaciones muchos-a-muchos y datos compartidos.
-  - Desventajas:
-    - Más consultas o `$lookup`: puede impactar rendimiento en lecturas intensivas.
-    - Complejidad: mayor lógica en consultas y agregaciones.
-    - No hay atomicidad entre colecciones: operaciones multi-documento no son atómicas por defecto.
-
-__Guía rápida__
-- Usa embebidos cuando: relación 1:1 o 1:pocos, acceso conjunto frecuente, cambios poco frecuentes, lectura rápida prioritaria.
-- Usa referencias cuando: datos compartidos por muchos documentos, actualizaciones frecuentes, relaciones complejas o riesgo de duplicación.
-
-__Aplicación en este repositorio__
-- MongoDB: `clientes` con `direccion` embebida (desarrollo simple y lecturas rápidas).
-- PostgreSQL: `clientes` y `direcciones` normalizados con foreign key (`direccion_id`) para consistencia y reutilización.
-
-{{ ... }}
