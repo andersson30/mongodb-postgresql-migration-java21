@@ -12,8 +12,8 @@ mongodb:
 # Configuración de PostgreSQL
 postgresql:
   url: jdbc:postgresql://localhost:5432/techtest
-  username: test
-  password: test
+  username: postgres
+  password: postgres123
 
 # Configuración de Apache Camel
 camel:
