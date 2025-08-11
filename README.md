@@ -81,39 +81,6 @@ mongodb-postgresql-migration/
 │       └── 03-test-data.sql
 └── README.md                              # Documentación completa
 ```
-
-## Modelado en MongoDB: Embebidos vs Referencias
-
-En este proyecto, la colección `clientes` en MongoDB almacena la dirección como un documento embebido (`direccion`) dentro del cliente. Durante la migración, se transforma a un modelo relacional en PostgreSQL donde `clientes.direccion_id` referencia a la tabla `direcciones`.
-
-- __Embebidos (como `clientes.direccion`)__
-  - Ventajas:
-    - Lecturas rápidas: una sola consulta devuelve el cliente con su dirección.
-    - Atomicidad: actualizaciones de cliente+dirección en una operación (a nivel de documento).
-    - Simplicidad: ideal para relaciones 1:1 o 1:pocos y datos que se consultan siempre juntos.
-  - Desventajas:
-    - Duplicación: si muchas personas comparten la misma dirección, se repite en múltiples documentos.
-    - Actualizaciones globales costosas: cambiar una calle común exige actualizar muchos documentos.
-    - Tamaño de documento: riesgo de crecer hacia el límite de 16MB si se embeben muchos subdocumentos.
-
-- __Referencias (colecciones separadas + `$lookup`)__
-  - Ventajas:
-    - Normalización: evita duplicados (una sola `direccion` referenciada por varios `clientes`).
-    - Mantenibilidad: actualizar una dirección se refleja en todos los clientes que la referencian.
-    - Escalabilidad: mejor para relaciones muchos-a-muchos y datos compartidos.
-  - Desventajas:
-    - Más consultas o `$lookup`: puede impactar rendimiento en lecturas intensivas.
-    - Complejidad: mayor lógica en consultas y agregaciones.
-    - No hay atomicidad entre colecciones: operaciones multi-documento no son atómicas por defecto.
-
-__Guía rápida__
-- Usa embebidos cuando: relación 1:1 o 1:pocos, acceso conjunto frecuente, cambios poco frecuentes, lectura rápida prioritaria.
-- Usa referencias cuando: datos compartidos por muchos documentos, actualizaciones frecuentes, relaciones complejas o riesgo de duplicación.
-
-__Aplicación en este repositorio__
-- MongoDB: `clientes` con `direccion` embebida (desarrollo simple y lecturas rápidas).
-- PostgreSQL: `clientes` y `direcciones` normalizados con foreign key (`direccion_id`) para consistencia y reutilización.
-
 ## Características de Java 21
 
 ### Records Inmutables
@@ -419,6 +386,7 @@ Esta sección mapea los requisitos del enunciado con lo implementado y provee lo
 
 ### Módulo 1: MongoDB y modelado
 - __Colección `clientes` con `direccion` embebida__: definida en `scripts/mongodb/01-create-collection.js` y poblada en `02-insert-data.js` (10 documentos).
+  <img width="782" height="1296" alt="image" src="https://github.com/user-attachments/assets/4527dc5b-17c5-4cf6-b632-94e696909bc2" />
 - __Consultas requeridas__:
   - Listar clientes por país (ejemplo: España):
     ```bash
@@ -431,11 +399,44 @@ Esta sección mapea los requisitos del enunciado con lo implementado y provee lo
     docker-compose -f scripts/Docker/docker-compose.yml exec mongodb-server \
       mongosh --quiet --eval "use techtest; db.clientes.updateOne({ nombre: 'Juan Pérez' }, { $set: { correo: 'juan.perez@nuevo.com' } })"
 
-    # Por _id (reemplazar <ID>)
+    # Por _id (6899ebbedbc39a17b874e39a)
     docker-compose -f scripts/Docker/docker-compose.yml exec mongodb-server \
-      mongosh --quiet --eval "use techtest; db.clientes.updateOne({ _id: ObjectId('<ID>') }, { $set: { correo: 'nuevo@mail.com' } })"
+      mongosh --quiet --eval "use techtest; db.clientes.updateOne({ _id: ObjectId('6899ebbedbc39a17b874e39a') }, { $set: { correo: 'nuevo@mail.com' } })"
     ```
-- __Embebidos vs Referencias__: ver sección "Modelado en MongoDB: Embebidos vs Referencias" (ya incluida arriba).
+    <img width="742" height="1214" alt="image" src="https://github.com/user-attachments/assets/2b5372e1-b210-4b8c-a0e1-c6cc24d331b5" />
+
+## Modelado en MongoDB: Embebidos vs Referencias
+
+En este proyecto, la colección `clientes` en MongoDB almacena la dirección como un documento embebido (`direccion`) dentro del cliente. Durante la migración, se transforma a un modelo relacional en PostgreSQL donde `clientes.direccion_id` referencia a la tabla `direcciones`.
+
+- __Embebidos (como `clientes.direccion`)__
+  - Ventajas:
+    - Lecturas rápidas: una sola consulta devuelve el cliente con su dirección.
+    - Atomicidad: actualizaciones de cliente+dirección en una operación (a nivel de documento).
+    - Simplicidad: ideal para relaciones 1:1 o 1:pocos y datos que se consultan siempre juntos.
+  - Desventajas:
+    - Duplicación: si muchas personas comparten la misma dirección, se repite en múltiples documentos.
+    - Actualizaciones globales costosas: cambiar una calle común exige actualizar muchos documentos.
+    - Tamaño de documento: riesgo de crecer hacia el límite de 16MB si se embeben muchos subdocumentos.
+
+- __Referencias (colecciones separadas + `$lookup`)__
+  - Ventajas:
+    - Normalización: evita duplicados (una sola `direccion` referenciada por varios `clientes`).
+    - Mantenibilidad: actualizar una dirección se refleja en todos los clientes que la referencian.
+    - Escalabilidad: mejor para relaciones muchos-a-muchos y datos compartidos.
+  - Desventajas:
+    - Más consultas o `$lookup`: puede impactar rendimiento en lecturas intensivas.
+    - Complejidad: mayor lógica en consultas y agregaciones.
+    - No hay atomicidad entre colecciones: operaciones multi-documento no son atómicas por defecto.
+
+__Guía rápida__
+- Usa embebidos cuando: relación 1:1 o 1:pocos, acceso conjunto frecuente, cambios poco frecuentes, lectura rápida prioritaria.
+- Usa referencias cuando: datos compartidos por muchos documentos, actualizaciones frecuentes, relaciones complejas o riesgo de duplicación.
+
+__Aplicación en este repositorio__
+- MongoDB: `clientes` con `direccion` embebida (desarrollo simple y lecturas rápidas).
+- PostgreSQL: `clientes` y `direcciones` normalizados con foreign key (`direccion_id`) para consistencia y reutilización.
+
 
 ### Módulo 2: PostgreSQL y PL/pgSQL
 - __Tablas `clientes` y `direcciones` con FK__: definidas en `scripts/postgresql/01-schema.sql`.
@@ -453,6 +454,7 @@ Esta sección mapea los requisitos del enunciado con lo implementado y provee lo
   docker-compose -f scripts/Docker/docker-compose.yml exec postgres-server \
     psql -U postgres -d techtest -c "SELECT * FROM obtener_clientes_por_pais('España');"
   ```
+<img width="1976" height="476" alt="image" src="https://github.com/user-attachments/assets/e2dd46d3-3444-4c17-9320-72eb0fbd2680" />
 
 ### Módulo 3: Java + Apache Camel
 - __Lectura de MongoDB__, __transformación__ y __upsert en PostgreSQL__: definidos en `src/main/java/com/techtest/route/MigrationRoute.java`, `processor/ClienteProcessor.java` y `service/PostgreSQLService.java`.
@@ -464,6 +466,7 @@ Esta sección mapea los requisitos del enunciado con lo implementado y provee lo
   # (Opcional) integración específica si aplica
   mvn -Dtest=MigrationIntegrationTest test
   ```
+<img width="2366" height="356" alt="image" src="https://github.com/user-attachments/assets/db1e6e1a-c679-45de-bd79-efddb74f0ff4" />
 
 ### Módulo 4: Git y entrega
 - __Repositorio Git__: inicializado, commits semánticos y README completo.
@@ -484,11 +487,16 @@ Incluye en el README (debajo de esta sección) o en la sección "Evidencia del d
 
 __Placeholders para imágenes__ (reemplaza las URLs al subir tus capturas):
 ```markdown
-![MongoDB - Inserción de documentos](https://github.com/user-attachments/<insercion>.png)
-![MongoDB - Listado por país](https://github.com/user-attachments/<listar-por-pais>.png)
-![MongoDB - Actualización de correo](https://github.com/user-attachments/<actualizar-correo>.png)
-![Logs - Migración Camel](https://github.com/user-attachments/<logs-migracion>.png)
-![PostgreSQL - Datos migrados](https://github.com/user-attachments/<postgres-datos>.png)
+![MongoDB - Inserción de documentos](<img width="1160" height="1006" alt="image" src="https://github.com/user-attachments/assets/425aa8f0-6749-4dec-be72-630ef204957c" />
+)
+![MongoDB - Listado por país](<img width="582" height="420" alt="image" src="https://github.com/user-attachments/assets/409a5895-e9da-4ade-8319-b2ff4a317108" />
+)
+![MongoDB - Actualización de correo](<img width="728" height="1196" alt="image" src="https://github.com/user-attachments/assets/8070e9a4-2bdd-47f1-93bd-3d13f33cf69c" />
+)
+![Logs - Migración Camel](<img width="2392" height="1108" alt="image" src="https://github.com/user-attachments/assets/b3e8c533-5a4a-45f1-a352-6aa9752cd4d5" />
+)
+![PostgreSQL - Datos migrados](<img width="2016" height="472" alt="image" src="https://github.com/user-attachments/assets/bfa5bbe1-8159-42fc-a02a-e2b8b954a1dd" />
+)
 ```
 
 ## Instalación y Configuración
@@ -746,4 +754,4 @@ networks:
     driver: bridge
 ```
 
-### Comandos Útiles
+
