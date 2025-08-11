@@ -4,7 +4,7 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.14-green.svg)](https://spring.io/projects/spring-boot)
 [![Apache Camel](https://img.shields.io/badge/Apache%20Camel-3.21.0-blue.svg)](https://camel.apache.org/)
 [![Maven](https://img.shields.io/badge/Maven-3.9+-red.svg)](https://maven.apache.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 
 ## 📋 Descripción
 
@@ -147,7 +147,7 @@ cliente.direccion().calle()
 
 ### 1️⃣ Clonar el Repositorio
 ```bash
-git clone https://github.com/tu-usuario/mongodb-postgresql-migration-java21.git
+git clone https://github.com/andersson30/mongodb-postgresql-migration-java21.git
 cd mongodb-postgresql-migration-java21
 ```
 
@@ -393,10 +393,7 @@ spec:
 - [x] Tests con Testcontainers
 - [x] Logging estructurado
 
-### 🔄 En Progreso
-- [ ] Resolución de logging en tests de integración
-- [ ] Métricas con Micrometer
-- [ ] Dashboard de monitoreo
+
 
 ### 🎯 Futuro (v2.1.0)
 - [ ] Pattern Matching (Java 21)
@@ -419,25 +416,13 @@ spec:
 - Tests unitarios obligatorios
 - Documentación JavaDoc para APIs públicas
 
-## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
 
 ## 👥 Autores
 
-- **Tu Nombre** - *Desarrollo inicial* - [tu-github](https://github.com/tu-usuario)
+- **Andersson Avila Rojas** - *Desarrollo inicial* - [tu-github](https://github.com/andersson30)
 
-## 🙏 Agradecimientos
 
-- Equipo de Apache Camel por la excelente documentación
-- Comunidad Spring Boot por los ejemplos
-- Testcontainers por simplificar testing de integración
-- OpenJDK team por Java 21
-
----
-
-⭐ **¡Si este proyecto te fue útil, dale una estrella!** ⭐
-- **Docker** (opcional, para Testcontainers)
 
 ### Configuración de bases de datos:
 
