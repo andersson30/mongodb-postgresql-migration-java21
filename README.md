@@ -1,4 +1,4 @@
-# MongoDB to PostgreSQL Migration with Java 21 🚀
+# MongoDB to PostgreSQL Migration with Java 21 
 
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/projects/jdk/21/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.14-green.svg)](https://spring.io/projects/spring-boot)
@@ -6,21 +6,21 @@
 [![Maven](https://img.shields.io/badge/Maven-3.9+-red.svg)](https://maven.apache.org/)
 
 
-## 📋 Descripción
+## Descripción
 
 Solución empresarial completa para migrar datos desde **MongoDB** a **PostgreSQL** utilizando **Java 21** con **Apache Camel**. Implementa las características más modernas de Java incluyendo **Records**, **Text Blocks**, y patrones de programación funcional.
 
-### ✨ Características Destacadas
+### Características Destacadas
 
-- 🎯 **Java 21 Records**: Modelos de datos inmutables y concisos
-- 📝 **Text Blocks**: SQL multilinea legible y mantenible  
-- 🔄 **Apache Camel**: Pipeline ETL robusto y escalable
-- 🗃️ **Dual Database**: MongoDB (documentos) → PostgreSQL (relacional)
-- 🧪 **Testcontainers**: Tests de integración con bases de datos reales
-- 📊 **Logging Estructurado**: Trazabilidad completa del proceso
-- 🛡️ **Manejo de Errores**: Reintentos automáticos y dead letter queue
+- **Java 21 Records**: Modelos de datos inmutables y concisos
+- **Text Blocks**: SQL multilinea legible y mantenible  
+- **Apache Camel**: Pipeline ETL robusto y escalable
+- **Dual Database**: MongoDB (documentos) → PostgreSQL (relacional)
+- **Testcontainers**: Tests de integración con bases de datos reales
+- **Logging Estructurado**: Trazabilidad completa del proceso
+- **Manejo de Errores**: Reintentos automáticos y dead letter queue
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ```mermaid
 graph LR
@@ -36,7 +36,7 @@ graph LR
     B --> H
 ```
 
-### 🧩 Componentes Principales
+### Componentes Principales
 
 | Componente | Tecnología | Propósito |
 |------------|------------|-----------|
@@ -49,40 +49,40 @@ graph LR
 | **Testing** | Testcontainers | Tests de integración con bases de datos reales |
 | **Connection Pool** | HikariCP | Pool de conexiones de alto rendimiento |
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 mongodb-postgresql-migration/
-├── 📁 src/main/java/com/techtest/
-│   ├── 🚀 MigrationApplication.java          # Aplicación Spring Boot principal
-│   ├── ⚙️ config/DatabaseConfig.java         # Configuración dual de BD
-│   ├── 🎯 model/                             # Java 21 Records
+├── src/main/java/com/techtest/
+│   ├── MigrationApplication.java          # Aplicación Spring Boot principal
+│   ├── config/DatabaseConfig.java         # Configuración dual de BD
+│   ├── model/                             # Java 21 Records
 │   │   ├── Cliente.java                      # Record inmutable con validación
 │   │   └── Direccion.java                    # Record con Jackson annotations
-│   ├── 🔄 processor/ClienteProcessor.java    # Transformación MongoDB → Java
-│   ├── 🛤️ route/MigrationRoute.java          # Pipeline Apache Camel
-│   └── 🗃️ service/PostgreSQLService.java     # Operaciones PostgreSQL
-├── 📁 src/main/resources/
+│   ├── processor/ClienteProcessor.java    # Transformación MongoDB → Java
+│   ├── route/MigrationRoute.java          # Pipeline Apache Camel
+│   └── service/PostgreSQLService.java     # Operaciones PostgreSQL
+├── src/main/resources/
 │   ├── application.yml                       # Configuración centralizada
 │   └── logback-spring.xml                    # Logging estructurado
-├── 📁 src/test/java/com/techtest/
-│   ├── 🧪 integration/                       # Tests con Testcontainers
+├── src/test/java/com/techtest/
+│   ├── integration/                       # Tests con Testcontainers
 │   │   └── MigrationIntegrationTest.java
-│   └── ⚡ processor/                         # Tests unitarios
+│   └── processor/                         # Tests unitarios
 │       └── ClienteProcessorTest.java
-├── 📁 scripts/
-│   ├── 🍃 mongodb/                           # Scripts y queries MongoDB
+├── scripts/
+│   ├── mongodb/                           # Scripts y queries MongoDB
 │   │   ├── 01-create-collection.js
 │   │   ├── 02-queries.js
 │   │   └── README-MongoDB.md
-│   └── 🐘 postgresql/                        # Schema y funciones PL/pgSQL
+│   └── postgresql/                        # Schema y funciones PL/pgSQL
 │       ├── 01-schema.sql
 │       ├── 02-functions.sql
 │       └── 03-test-data.sql
-└── 📋 README.md                              # Documentación completa
+└── README.md                              # Documentación completa
 ```
 
-## 🎯 Características de Java 21
+## Características de Java 21
 
 ### Records Inmutables
 ```java
@@ -132,7 +132,8 @@ cliente.getDireccion().getCalle()
 cliente.nombre()
 cliente.direccion().calle()
 ```
-## 🛠️ Requisitos del Sistema
+
+## Requisitos del Sistema
 
 | Requisito | Versión Mínima | Recomendada |
 |-----------|----------------|-------------|
@@ -143,321 +144,11 @@ cliente.direccion().calle()
 | **Docker** | 20.10+ | 24.0+ |
 | **RAM** | 4GB | 8GB+ |
 
-## 🚀 Instalación y Configuración
-
-### 1️⃣ Clonar el Repositorio
-```bash
-git clone https://github.com/andersson30/mongodb-postgresql-migration-java21.git
-cd mongodb-postgresql-migration-java21
-```
-
-### 2️⃣ Verificar Java 21
-```bash
-java --version
-# Debe mostrar: openjdk 21.x.x o superior
-```
-
-### 3️⃣ Configurar Bases de Datos
-
-#### 🍃 MongoDB (Docker)
-```bash
-docker run -d --name mongodb-migration \
-  -p 27017:27017 \
-  -e MONGO_INITDB_DATABASE=techtest \
-  mongo:6.0
-```
-
-#### 🐘 PostgreSQL (Docker)
-```bash
-docker run -d --name postgres-migration \
-  -p 5432:5432 \
-  -e POSTGRES_DB=techtest \
-  -e POSTGRES_USER=test \
-  -e POSTGRES_PASSWORD=test \
-  postgres:15
-```
-
-### 4️⃣ Configurar Aplicación
-```bash
-# Copiar configuración de ejemplo
-cp src/main/resources/application-example.yml src/main/resources/application.yml
-
-# Editar configuración según tu entorno
-vim src/main/resources/application.yml
-```
-
-### 5️⃣ Compilar y Ejecutar
-```bash
-# Compilar con Java 21
-mvn clean compile
-
-# Ejecutar tests unitarios
-mvn test -Dtest=ClienteProcessorTest
-
-# Ejecutar aplicación
-mvn spring-boot:run
-```
-
-## 📊 Uso del Sistema
-
-### 🔄 Pipeline de Migración
-
-1. **Preparar datos en MongoDB**:
-```bash
-# Ejecutar scripts de inicialización
-mongo techtest < scripts/mongodb/01-create-collection.js
-mongo techtest < scripts/mongodb/02-insert-data.js
-```
-
-2. **Configurar PostgreSQL**:
-```bash
-# Crear schema y funciones
-psql -h localhost -U test -d techtest -f scripts/postgresql/01-schema.sql
-psql -h localhost -U test -d techtest -f scripts/postgresql/02-functions.sql
-```
-
-3. **Ejecutar migración**:
-```bash
-# Migración completa
-mvn spring-boot:run
-
-# O ejecutar con perfil específico
-mvn spring-boot:run -Dspring.profiles.active=production
-```
-
-### 📈 Monitoreo y Logs
-
-Los logs estructurados se guardan en:
-- `logs/migration.log` - Log principal
-- `logs/migration-error.log` - Solo errores
-- Consola - Output en tiempo real
-
-Ejemplo de log:
-```
-2024-01-15 10:30:15.123 [main] INFO  c.t.route.MigrationRoute - Iniciando migración MongoDB → PostgreSQL
-2024-01-15 10:30:15.456 [Camel-1] INFO  c.t.processor.ClienteProcessor - Cliente transformado: Juan Pérez
-2024-01-15 10:30:15.789 [Camel-1] INFO  c.t.service.PostgreSQLService - Cliente migrado exitosamente. ID: 1
-```
-
-## 🧪 Testing
-
-### Tests Unitarios
-```bash
-# Ejecutar todos los tests unitarios
-mvn test -Dtest=ClienteProcessorTest
-
-# Test específico
-mvn test -Dtest=ClienteProcessorTest#testProcessDocumentSuccess
-```
-
-### Tests de Integración (Testcontainers)
-```bash
-# Requiere Docker ejecutándose
-mvn test -Dtest=MigrationIntegrationTest
-
-# Test completo con cobertura
-mvn clean test jacoco:report
-```
-
-## 🏗️ Arquitectura de Datos
-
-### MongoDB Schema (Origen)
-```javascript
-{
-  "_id": ObjectId("..."),
-  "nombre": "Juan Pérez",
-  "correo": "juan@email.com",
-  "direccion": {
-    "calle": "Calle Principal 123",
-    "ciudad": "Madrid",
-    "pais": "España"
-  }
-}
-```
-
-### PostgreSQL Schema (Destino)
-```sql
--- Tabla direcciones (normalizada)
-CREATE TABLE direcciones (
-    id SERIAL PRIMARY KEY,
-    calle VARCHAR(255) NOT NULL,
-    ciudad VARCHAR(100) NOT NULL,
-    pais VARCHAR(100) NOT NULL
-);
-
--- Tabla clientes (referencia a direcciones)
-CREATE TABLE clientes (
-    id SERIAL PRIMARY KEY,
-    mongo_id VARCHAR(24) UNIQUE NOT NULL,
-    nombre VARCHAR(255) NOT NULL,
-    correo VARCHAR(255) UNIQUE NOT NULL,
-    direccion_id INTEGER REFERENCES direcciones(id)
-);
-```
-
-## 🔧 Configuración Avanzada
-
-### Variables de Entorno
-```bash
-# MongoDB
-export MONGODB_URI=mongodb://localhost:27017
-export MONGODB_DATABASE=techtest
-
-# PostgreSQL  
-export POSTGRES_URL=jdbc:postgresql://localhost:5432/techtest
-export POSTGRES_USER=test
-export POSTGRES_PASSWORD=test
-
-# Aplicación
-export SPRING_PROFILES_ACTIVE=production
-export LOG_LEVEL=INFO
-```
-
-### Configuración de Rendimiento
-```yaml
-# application.yml
-spring:
-  datasource:
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      connection-timeout: 30000
-
-camel:
-  springboot:
-    main-run-controller: true
-  component:
-    mongodb:
-      connection-pool-max-size: 100
-```
-
-## 🚀 Deployment
-
-### Docker Compose
-```yaml
-version: '3.8'
-services:
-  migration-app:
-    build: .
-    environment:
-      - MONGODB_URI=mongodb://mongodb:27017
-      - POSTGRES_URL=jdbc:postgresql://postgres:5432/techtest
-    depends_on:
-      - mongodb
-      - postgres
-  
-  mongodb:
-    image: mongo:6.0
-    ports:
-      - "27017:27017"
-  
-  postgres:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: techtest
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-```
-
-### Kubernetes
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: migration-app
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: migration-app
-  template:
-    metadata:
-      labels:
-        app: migration-app
-    spec:
-      containers:
-      - name: migration-app
-        image: migration-app:2.0.0
-        env:
-        - name: JAVA_OPTS
-          value: "-Xmx2g -XX:+UseG1GC"
-```
-
-## 📋 Roadmap
-
-### ✅ Completado (v2.0.0)
-- [x] Migración a Java 21
-- [x] Implementación de Records
-- [x] Text Blocks para SQL
-- [x] Pipeline Apache Camel
-- [x] Tests con Testcontainers
-- [x] Logging estructurado
-
-
-
-### 🎯 Futuro (v2.1.0)
-- [ ] Pattern Matching (Java 21)
-- [ ] Virtual Threads
-- [ ] Migración incremental
-- [ ] API REST para control
-- [ ] Interfaz web de monitoreo
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crear branch de feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit cambios (`git commit -m 'feat: agregar nueva funcionalidad'`)
-4. Push al branch (`git push origin feature/nueva-funcionalidad`)
-5. Crear Pull Request
-
-### Estándares de Código
-- Usar Java 21 features cuando sea apropiado
-- Seguir convenciones de Spring Boot
-- Tests unitarios obligatorios
-- Documentación JavaDoc para APIs públicas
-
-
-
-## 👥 Autores
-
-- **Andersson Avila Rojas** - *Desarrollo inicial* - [tu-github](https://github.com/andersson30)
-
-
-
-### Configuración de bases de datos:
-
-#### MongoDB
-```bash
-# Instalar MongoDB (macOS)
-brew install mongodb-community
-
-# Iniciar servicio
-brew services start mongodb-community
-
-# Verificar conexión
-mongo --eval "db.adminCommand('ismaster')"
-```
-
-#### PostgreSQL
-```bash
-# Instalar PostgreSQL (macOS)
-brew install postgresql
-
-# Iniciar servicio
-brew services start postgresql
-
-# Crear base de datos
-createdb techtest
-
-# Verificar conexión
-psql -d techtest -c "SELECT version();"
-```
-
 ## Instalación y Configuración
 
 ### 1. Clonar y configurar el proyecto
 ```bash
-git clone <repository-url>
+git clone https://github.com/andersson30/mongodb-postgresql-migration-java21.git
 cd mongodb-postgresql-migration
 ```
 
@@ -550,59 +241,59 @@ JOIN direcciones d ON c.direccion_id = d.id;
 ## Funcionalidades Implementadas
 
 ### Módulo 1: MongoDB
-- ✅ Colección `clientes` con documentos embebidos
-- ✅ 10 documentos de prueba con datos variados
-- ✅ Consultas por país y actualización de correo
-- ✅ Índices optimizados para consultas
-- ✅ Análisis de documentos embebidos vs referencias
+- Colección `clientes` con documentos embebidos
+- 10 documentos de prueba con datos variados
+- Consultas por país y actualización de correo
+- Índices optimizados para consultas
+- Análisis de documentos embebidos vs referencias
 
 ### Módulo 2: PostgreSQL + PL/pgSQL
-- ✅ Tablas `clientes` y `direcciones` con integridad referencial
-- ✅ Función `upsert_cliente()` para INSERT/UPDATE
-- ✅ Función `upsert_direccion()` para normalización
-- ✅ Procedimiento `obtener_clientes_por_pais()`
-- ✅ Triggers para `updated_at` automático
-- ✅ Datos de prueba para validación
+- Tablas `clientes` y `direcciones` con integridad referencial
+- Función `upsert_cliente()` para INSERT/UPDATE
+- Función `upsert_direccion()` para normalización
+- Procedimiento `obtener_clientes_por_pais()`
+- Triggers para `updated_at` automático
+- Datos de prueba para validación
 
 ### Módulo 3: Java + Apache Camel
-- ✅ Proyecto Maven con Spring Boot
-- ✅ Conexión a MongoDB y PostgreSQL
-- ✅ Transformación de documentos a modelo relacional
-- ✅ Rutas Camel con manejo de errores y reintentos
-- ✅ Logging detallado en cada paso
-- ✅ Pool de conexiones optimizado (HikariCP)
+- Proyecto Maven con Spring Boot
+- Conexión a MongoDB y PostgreSQL
+- Transformación de documentos a modelo relacional
+- Rutas Camel con manejo de errores y reintentos
+- Logging detallado en cada paso
+- Pool de conexiones optimizado (HikariCP)
 
 ### Testing
-- ✅ Pruebas unitarias para transformación de datos
-- ✅ Pruebas de integración con Testcontainers
-- ✅ Verificación de migración completa
-- ✅ Testing de casos edge (direcciones duplicadas, errores)
+- Pruebas unitarias para transformación de datos
+- Pruebas de integración con Testcontainers
+- Verificación de migración completa
+- Testing de casos edge (direcciones duplicadas, errores)
 
 ## Características Técnicas
 
 ### Manejo de Errores
-- **Reintentos automáticos**: 3 intentos con backoff exponencial
-- **Dead Letter Queue**: Mensajes fallidos se registran para análisis
-- **Logging detallado**: Cada error se registra con contexto completo
+- Reintentos automáticos: 3 intentos con backoff exponencial
+- Dead Letter Queue: Mensajes fallidos se registran para análisis
+- Logging detallado: Cada error se registra con contexto completo
 
 ### Optimizaciones
-- **Pool de conexiones**: HikariCP para PostgreSQL
-- **Índices de BD**: Optimizados para consultas frecuentes
-- **Upsert inteligente**: Evita duplicados de direcciones
-- **Streaming**: Procesamiento de grandes volúmenes sin cargar todo en memoria
+- Pool de conexiones: HikariCP para PostgreSQL
+- Índices de BD: Optimizados para consultas frecuentes
+- Upsert inteligente: Evita duplicados de direcciones
+- Streaming: Procesamiento de grandes volúmenes sin cargar todo en memoria
 
 ### Logging
-- **Archivo rotativo**: `logs/migration.log` con rotación por tamaño/tiempo
-- **Niveles configurables**: INFO para aplicación, WARN para librerías
-- **Formato estructurado**: Timestamp, thread, nivel, logger, mensaje
+- Archivo rotativo: `logs/migration.log` con rotación
+- Niveles configurables: INFO para aplicación, WARN para librerías
+- Formato estructurado: Timestamp, thread, nivel, logger, mensaje
 
 ## Casos de Uso Cubiertos
 
-1. **Migración inicial completa**: Todos los documentos de MongoDB a PostgreSQL
-2. **Actualizaciones incrementales**: Re-ejecutar migración actualiza registros existentes
-3. **Direcciones compartidas**: Múltiples clientes con la misma dirección (normalización)
-4. **Manejo de errores**: Documentos malformados o errores de conexión
-5. **Monitoreo**: Logs y métricas para supervisión
+1. Migración inicial completa: Todos los documentos de MongoDB a PostgreSQL
+2. Actualizaciones incrementales: Re-ejecutar migración actualiza registros existentes
+3. Direcciones compartidas: Múltiples clientes con la misma dirección (normalización)
+4. Manejo de errores: Documentos malformados o errores de conexión
+5. Monitoreo: Logs y métricas para supervisión
 
 ## Comandos Útiles
 
@@ -646,25 +337,25 @@ curl http://localhost:8080/actuator/camel/routes
 
 ### Problemas comunes:
 
-1. **Error de conexión MongoDB**
+1. Error de conexión MongoDB
    ```
    Verificar que MongoDB esté ejecutándose: brew services list
    Verificar puerto: netstat -an | grep 27017
    ```
 
-2. **Error de conexión PostgreSQL**
+2. Error de conexión PostgreSQL
    ```
    Verificar servicio: brew services list
    Verificar base de datos: psql -l
    ```
 
-3. **Errores de compilación**
+3. Errores de compilación
    ```
    Limpiar y recompilar: mvn clean compile
    Verificar Java version: java -version
    ```
 
-4. **Pruebas fallan**
+4. Pruebas fallan
    ```
    Verificar Docker: docker --version
    Limpiar contenedores: docker system prune
@@ -674,11 +365,11 @@ curl http://localhost:8080/actuator/camel/routes
 
 Para extender esta solución:
 
-1. **Monitoreo avanzado**: Integrar Micrometer/Prometheus
-2. **Configuración externa**: Usar Spring Cloud Config
-3. **Procesamiento batch**: Implementar Spring Batch para grandes volúmenes
-4. **API REST**: Exponer endpoints para control manual de migración
-5. **Notificaciones**: Alertas por email/Slack en caso de errores
+1. Monitoreo avanzado: Integrar Micrometer/Prometheus
+2. Configuración externa: Usar Spring Cloud Config
+3. Procesamiento batch: Implementar Spring Batch para grandes volúmenes
+4. API REST: Exponer endpoints para control manual de migración
+5. Notificaciones: Alertas por email/Slack en caso de errores
 
 ## Contacto
 
@@ -686,6 +377,281 @@ Para preguntas o soporte técnico, contactar al equipo de desarrollo.
 
 ---
 
-**Versión**: 1.0.0  
-**Fecha**: 2025-08-11  
-**Autor**: Technical Test Implementation
+Versión: 1.0.0  
+Fecha: 2025-08-11  
+Autor: Technical Test Implementation
+
+## Instalación y Configuración
+
+### Prerrequisitos
+
+- **Java 21** (OpenJDK o Oracle JDK)
+- **Maven 3.8+**
+- **Docker** y **Docker Compose** (recomendado)
+- **Git**
+
+### Opción 1: Entorno Docker (Recomendado)
+
+#### 1. Clonar el Proyecto
+```bash
+git clone https://github.com/andersson30/mongodb-postgresql-migration-java21.git
+cd mongodb-postgresql-migration-java21
+```
+
+#### 2. Levantar Entorno Docker
+```bash
+# Navegar al directorio de Docker
+cd scripts/Docker
+
+# Levantar todos los servicios
+docker-compose up -d
+
+# Verificar que todos los contenedores estén corriendo
+docker-compose ps
+```
+
+**Servicios incluidos:**
+- **MongoDB** (puerto 27017) - Base de datos origen
+- **Mongo Express** (puerto 8081) - Admin UI para MongoDB
+- **PostgreSQL** (puerto 5432) - Base de datos destino  
+- **pgAdmin** (puerto 8080) - Admin UI para PostgreSQL
+
+#### 3. Configurar PostgreSQL
+```bash
+# Ejecutar scripts de inicialización (desde la raíz del proyecto)
+cd ../..
+
+# Crear schema y tablas
+docker-compose -f scripts/Docker/docker-compose.yml exec postgres-server \
+  psql -U postgres -d techtest -f /docker-entrypoint-initdb.d/01-schema.sql
+
+# Crear funciones PL/pgSQL
+docker-compose -f scripts/Docker/docker-compose.yml exec postgres-server \
+  psql -U postgres -d techtest -f /docker-entrypoint-initdb.d/02-functions.sql
+
+# Insertar datos de prueba
+docker-compose -f scripts/Docker/docker-compose.yml exec postgres-server \
+  psql -U postgres -d techtest -f /docker-entrypoint-initdb.d/03-test-data.sql
+```
+
+#### 4. Configurar MongoDB
+```bash
+# Conectar a MongoDB y ejecutar scripts
+docker-compose -f scripts/Docker/docker-compose.yml exec mongodb-server mongosh techtest
+
+# Dentro de mongosh, ejecutar:
+load('/docker-entrypoint-initdb.d/01-create-collection.js')
+load('/docker-entrypoint-initdb.d/02-insert-data.js')
+exit
+```
+
+#### 5. Verificar Configuración
+
+**MongoDB (Mongo Express):**
+- Abrir http://localhost:8081
+- Navegar a base de datos `techtest` → colección `clientes`
+- Verificar que hay 10 documentos
+
+**PostgreSQL (pgAdmin):**
+- Abrir http://localhost:8080
+- Login: `admin@admin.com` / `admin123`
+- Agregar servidor: Host `postgres-server`, Puerto `5432`, Usuario `postgres`, Password `postgres123`
+- Verificar base de datos `techtest` con tablas `clientes` y `direcciones`
+
+#### 6. Ejecutar Migración
+```bash
+# Compilar y ejecutar aplicación
+mvn clean compile
+mvn spring-boot:run
+```
+
+**Resultado esperado:**
+```
+2025-08-11 12:02:00.232 [Camel] INFO  PostgreSQLService - Verificación de conexión PostgreSQL: OK
+2025-08-11 12:02:00.343 [Camel] INFO  ClienteProcessor - Procesando documento MongoDB: 6899ebbe...
+2025-08-11 12:02:00.344 [Camel] INFO  ClienteProcessor - Cliente transformado exitosamente: Juan Pérez
+2025-08-11 12:02:00.361 [Camel] INFO  PostgreSQLService - Cliente procesado exitosamente. ID PostgreSQL: 1
+...
+2025-08-11 12:02:00.380 [Camel] INFO  PostgreSQLService - Estadísticas de migración: 10 clientes, 10 direcciones, 5 países, 8 ciudades
+```
+
+#### 7. Verificar Migración
+```bash
+# Verificar datos migrados en PostgreSQL
+docker-compose -f scripts/Docker/docker-compose.yml exec postgres-server \
+  psql -U postgres -d techtest -c "
+    SELECT c.nombre, c.correo, d.calle, d.ciudad, d.pais 
+    FROM clientes c 
+    JOIN direcciones d ON c.direccion_id = d.id 
+    LIMIT 5;"
+```
+
+#### 8. Detener Entorno
+```bash
+# Detener todos los servicios
+cd scripts/Docker
+docker-compose down
+
+# Detener y eliminar volúmenes (CUIDADO: elimina datos)
+docker-compose down -v
+```
+
+### Opción 2: Instalación Local
+
+Si prefieres instalar las bases de datos localmente:
+
+#### MongoDB Local
+```bash
+# macOS
+brew install mongodb-community
+brew services start mongodb-community
+
+# Ubuntu/Debian
+sudo apt-get install mongodb
+sudo systemctl start mongodb
+
+# Verificar
+mongosh --eval "db.adminCommand('ismaster')"
+```
+
+#### PostgreSQL Local
+```bash
+# macOS  
+brew install postgresql
+brew services start postgresql
+createdb techtest
+
+# Ubuntu/Debian
+sudo apt-get install postgresql postgresql-contrib
+sudo systemctl start postgresql
+sudo -u postgres createdb techtest
+
+# Verificar
+psql -d techtest -c "SELECT version();"
+```
+
+## Uso del Sistema
+
+### Pipeline de Migración Automática
+
+La aplicación está configurada para ejecutar la migración automáticamente al iniciar:
+
+1. **Timer de Apache Camel** se activa después de 1 segundo
+2. **Lee todos los documentos** de MongoDB (`techtest.clientes`)
+3. **Transforma cada documento** usando Java 21 records
+4. **Guarda en PostgreSQL** usando funciones PL/pgSQL optimizadas
+5. **Muestra estadísticas finales** de migración
+
+### Monitoreo en Tiempo Real
+
+**Logs estructurados:**
+- Consola: Output en tiempo real con colores
+- `logs/migration.log`: Log completo con rotación
+- `logs/migration-error.log`: Solo errores y warnings
+
+**Interfaces de administración:**
+- **Mongo Express**: http://localhost:8081 (MongoDB)
+- **pgAdmin**: http://localhost:8080 (PostgreSQL)
+
+### Re-ejecutar Migración
+```bash
+# Limpiar datos de PostgreSQL
+docker-compose -f scripts/Docker/docker-compose.yml exec postgres-server \
+  psql -U postgres -d techtest -c "DELETE FROM clientes; DELETE FROM direcciones;"
+
+# Re-ejecutar aplicación
+mvn spring-boot:run
+```
+
+## Deployment
+
+### Docker Compose Completo
+
+El archivo `scripts/Docker/docker-compose.yml` incluye:
+
+```yaml
+version: '3.8'
+
+services:
+  # MongoDB + Admin UI
+  mongodb-server:
+    image: mongo:6.0
+    container_name: mongodb-server
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ../mongodb:/docker-entrypoint-initdb.d
+    networks:
+      - migration-network
+
+  mongo-express:
+    image: mongo-express:1.0.0-alpha
+    container_name: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb-server
+      ME_CONFIG_MONGODB_PORT: 27017
+    depends_on:
+      - mongodb-server
+    networks:
+      - migration-network
+
+  # PostgreSQL + Admin UI  
+  postgres-server:
+    image: postgres:15
+    container_name: postgres-server
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: techtest
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../postgresql:/docker-entrypoint-initdb.d
+    networks:
+      - migration-network
+
+  pgadmin:
+    image: dpage/pgadmin4:7
+    container_name: pgadmin
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    depends_on:
+      - postgres-server
+    networks:
+      - migration-network
+
+volumes:
+  mongodb_data:
+  postgres_data:
+
+networks:
+  migration-network:
+    driver: bridge
+```
+
+### Comandos Útiles
+
+```bash
+# Ver logs de un servicio específico
+docker-compose logs -f mongodb-server
+docker-compose logs -f postgres-server
+
+# Ejecutar comandos en contenedores
+docker-compose exec mongodb-server mongosh techtest
+docker-compose exec postgres-server psql -U postgres -d techtest
+
+# Reiniciar un servicio específico
+docker-compose restart mongodb-server
+
+# Ver estado de todos los servicios
+docker-compose ps
+
+# Ver uso de recursos
+docker stats
