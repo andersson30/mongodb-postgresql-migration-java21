@@ -82,6 +82,38 @@ mongodb-postgresql-migration/
 └── README.md                              # Documentación completa
 ```
 
+## Modelado en MongoDB: Embebidos vs Referencias
+
+En este proyecto, la colección `clientes` en MongoDB almacena la dirección como un documento embebido (`direccion`) dentro del cliente. Durante la migración, se transforma a un modelo relacional en PostgreSQL donde `clientes.direccion_id` referencia a la tabla `direcciones`.
+
+- __Embebidos (como `clientes.direccion`)__
+  - Ventajas:
+    - Lecturas rápidas: una sola consulta devuelve el cliente con su dirección.
+    - Atomicidad: actualizaciones de cliente+dirección en una operación (a nivel de documento).
+    - Simplicidad: ideal para relaciones 1:1 o 1:pocos y datos que se consultan siempre juntos.
+  - Desventajas:
+    - Duplicación: si muchas personas comparten la misma dirección, se repite en múltiples documentos.
+    - Actualizaciones globales costosas: cambiar una calle común exige actualizar muchos documentos.
+    - Tamaño de documento: riesgo de crecer hacia el límite de 16MB si se embeben muchos subdocumentos.
+
+- __Referencias (colecciones separadas + `$lookup`)__
+  - Ventajas:
+    - Normalización: evita duplicados (una sola `direccion` referenciada por varios `clientes`).
+    - Mantenibilidad: actualizar una dirección se refleja en todos los clientes que la referencian.
+    - Escalabilidad: mejor para relaciones muchos-a-muchos y datos compartidos.
+  - Desventajas:
+    - Más consultas o `$lookup`: puede impactar rendimiento en lecturas intensivas.
+    - Complejidad: mayor lógica en consultas y agregaciones.
+    - No hay atomicidad entre colecciones: operaciones multi-documento no son atómicas por defecto.
+
+__Guía rápida__
+- Usa embebidos cuando: relación 1:1 o 1:pocos, acceso conjunto frecuente, cambios poco frecuentes, lectura rápida prioritaria.
+- Usa referencias cuando: datos compartidos por muchos documentos, actualizaciones frecuentes, relaciones complejas o riesgo de duplicación.
+
+__Aplicación en este repositorio__
+- MongoDB: `clientes` con `direccion` embebida (desarrollo simple y lecturas rápidas).
+- PostgreSQL: `clientes` y `direcciones` normalizados con foreign key (`direccion_id`) para consistencia y reutilización.
+
 ## Características de Java 21
 
 ### Records Inmutables
@@ -666,3 +698,47 @@ Se inserta la los datos en la colleccion
 
 
 
+
+```
+
+Follow these instructions to make the following change to my code document.
+
+Instruction: Agregar una sección breve al README explicando ventajas y desventajas de documentos embebidos vs referencias en MongoDB usando como ejemplo la colección `clientes` con `direccion` embebida de este proyecto, y su mapeo a PostgreSQL.
+
+Code Edit:
+```
+{{ ... }}
+
+## Modelado en MongoDB: Embebidos vs Referencias
+
+En este proyecto, la colección `clientes` en MongoDB almacena la dirección como un documento embebido (`direccion`) dentro del cliente. Durante la migración, se transforma a un modelo relacional en PostgreSQL donde `clientes.direccion_id` referencia a la tabla `direcciones`.
+
+- __Embebidos (como `clientes.direccion`)__
+  - Ventajas:
+    - Lecturas rápidas: una sola consulta devuelve el cliente con su dirección.
+    - Atomicidad: actualizaciones de cliente+dirección en una operación (a nivel de documento).
+    - Simplicidad: ideal para relaciones 1:1 o 1:pocos y datos que se consultan siempre juntos.
+  - Desventajas:
+    - Duplicación: si muchas personas comparten la misma dirección, se repite en múltiples documentos.
+    - Actualizaciones globales costosas: cambiar una calle común exige actualizar muchos documentos.
+    - Tamaño de documento: riesgo de crecer hacia el límite de 16MB si se embeben muchos subdocumentos.
+
+- __Referencias (colecciones separadas + `$lookup`)__
+  - Ventajas:
+    - Normalización: evita duplicados (una sola `direccion` referenciada por varios `clientes`).
+    - Mantenibilidad: actualizar una dirección se refleja en todos los clientes que la referencian.
+    - Escalabilidad: mejor para relaciones muchos-a-muchos y datos compartidos.
+  - Desventajas:
+    - Más consultas o `$lookup`: puede impactar rendimiento en lecturas intensivas.
+    - Complejidad: mayor lógica en consultas y agregaciones.
+    - No hay atomicidad entre colecciones: operaciones multi-documento no son atómicas por defecto.
+
+__Guía rápida__
+- Usa embebidos cuando: relación 1:1 o 1:pocos, acceso conjunto frecuente, cambios poco frecuentes, lectura rápida prioritaria.
+- Usa referencias cuando: datos compartidos por muchos documentos, actualizaciones frecuentes, relaciones complejas o riesgo de duplicación.
+
+__Aplicación en este repositorio__
+- MongoDB: `clientes` con `direccion` embebida (desarrollo simple y lecturas rápidas).
+- PostgreSQL: `clientes` y `direcciones` normalizados con foreign key (`direccion_id`) para consistencia y reutilización.
+
+{{ ... }}
