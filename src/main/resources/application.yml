@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: mongodb-postgresql-migration
+
+# Configuración de MongoDB
+mongodb:
+  connection:
+    uri: mongodb://localhost:27017
+  database:
+    name: techtest
+
+# Configuración de PostgreSQL
+postgresql:
+  url: jdbc:postgresql://localhost:5432/techtest
+  username: postgres
+  password: postgres
+
+# Configuración de Apache Camel
+camel:
+  springboot:
+    name: MigrationCamelContext
+  component:
+    mongodb:
+      mongo-client-ref: mongoClient
+
+# Configuración de logging
+logging:
+  level:
+    com.techtest: INFO
+    org.apache.camel: INFO
+    org.springframework: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/migration.log
+
+# Configuración del servidor (para actuator si se necesita)
+server:
+  port: 8080
+
+# Configuración de management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,camel
+  endpoint:
+    health:
+      show-details: always
