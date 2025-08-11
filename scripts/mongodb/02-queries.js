@@ -1,7 +1,7 @@
 // MongoDB Script - Consultas y operaciones
 // Ejecutar con: mongo mongodb://localhost:27017/techtest scripts/mongodb/02-queries.js
 
-use techtest;
+db = db.getSiblingDB("techtest");
 
 print("=== CONSULTAS MONGODB ===\n");
 

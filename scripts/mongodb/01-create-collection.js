@@ -1,5 +1,7 @@
 // MongoDB Script - Crear colección clientes y insertar datos de prueba
-// Ejecutar con: mongo mongodb://localhost:27017/techtest scripts/mongodb/01-create-collection.js
+// Ejecutar en la terminal: 
+// docker cp scripts/mongodb/01-create-collection.js mongo-server:/01-create-collection.js 
+// docker exec -it mongo-server mongosh "mongodb://localhost:27017/techtest" /01-create-collection.js
 // Usar la base de datos techtest
 db = db.getSiblingDB("techtest");
 
