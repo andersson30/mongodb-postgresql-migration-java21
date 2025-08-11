@@ -372,7 +372,7 @@ Para extender esta solución:
 
 ---
 
-Versión: 1.0.0  
+Versión: 4.0.0 (Tag creado)
 Fecha: 2025-08-11  
 Autor: Andersson Avila Rojas
 
