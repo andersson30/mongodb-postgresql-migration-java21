@@ -1,0 +1,20 @@
+# Build
+/target/
+*.iml
+.classpath
+.project
+.settings/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar

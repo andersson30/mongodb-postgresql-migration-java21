@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Maven cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: Build and test
+        run: mvn -B -ntp -DskipITs=false verify
+
+  docker-validate:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:6
+        ports:
+          - 27017:27017
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: postgres123
+          POSTGRES_DB: techtest
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres" 
+          --health-interval=10s --health-timeout=5s --health-retries=5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Initialize PostgreSQL schema
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          psql -h localhost -U postgres -d techtest -c 'SELECT 1;' || true
+          psql -h localhost -U postgres -d techtest -f scripts/postgresql/01-schema.sql
+          psql -h localhost -U postgres -d techtest -f scripts/postgresql/02-functions.sql
+          psql -h localhost -U postgres -d techtest -f scripts/postgresql/03-test-data.sql
+        env:
+          PGPASSWORD: postgres123
+
+      - name: Seed MongoDB
+        run: |
+          docker run --rm --network host -v ${{ github.workspace }}:/work -w /work mongo:6 \
+            mongosh "mongodb://localhost:27017/techtest" /work/scripts/mongodb/01-create-collection.js
+          docker run --rm --network host -v ${{ github.workspace }}:/work -w /work mongo:6 \
+            mongosh "mongodb://localhost:27017/techtest" /work/scripts/mongodb/02-queries.js
+
+      - name: Build app
+        run: mvn -B -ntp -DskipTests package
+
+      - name: Run unit tests
+        run: mvn -B -ntp test
+
+      - name: Upload logs (if exist)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: app-logs
+          path: |
+            logs/**
+          if-no-files-found: ignore
