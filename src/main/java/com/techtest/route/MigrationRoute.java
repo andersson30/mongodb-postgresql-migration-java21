@@ -33,7 +33,7 @@ public class MigrationRoute extends RouteBuilder {
             .to("direct:error-handler");
 
         // Ruta principal de migración
-        from("timer://migration?period=30000&repeatCount=1")
+        from("timer://migration?delay=1000&repeatCount=1")
             .routeId("mongodb-to-postgresql-migration")
             .log("=== Iniciando migración de MongoDB a PostgreSQL ===")
             .bean(postgreSQLService, "verificarConexion")

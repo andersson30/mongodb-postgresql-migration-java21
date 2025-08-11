@@ -19,6 +19,7 @@ postgresql:
 camel:
   springboot:
     name: MigrationCamelContext
+    main-run-controller: true
   component:
     mongodb:
       mongo-client-ref: mongoClient
