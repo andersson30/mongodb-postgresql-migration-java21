@@ -319,7 +319,6 @@ SELECT * FROM obtener_estadisticas_migracion();
 # Ver clientes por país
 SELECT * FROM obtener_clientes_por_pais('España');
 ```
-
 ### Aplicación
 ```bash
 # Ver logs en tiempo real
@@ -370,15 +369,12 @@ Para extender esta solución:
 4. API REST: Exponer endpoints para control manual de migración
 5. Notificaciones: Alertas por email/Slack en caso de errores
 
-## Contacto
-
-Para preguntas o soporte técnico, contactar al equipo de desarrollo.
 
 ---
 
 Versión: 1.0.0  
 Fecha: 2025-08-11  
-Autor: Technical Test Implementation
+Autor: Andersson Avila Rojas
 
 ## Cumplimiento de requisitos y guía de entrega
 
@@ -528,6 +524,8 @@ docker-compose ps
 - **pgAdmin** (puerto 8080) - Admin UI para PostgreSQL
 
 #### 3. Configurar PostgreSQL
+Este repositorio usa docker compose ver scripts/Docker/docker-compose.yml
+sin embargo usar la base de datos local si prefieres
 ```bash
 # Ejecutar scripts de inicialización (desde la raíz del proyecto)
 cd ../..
@@ -745,3 +743,6 @@ volumes:
 networks:
   migration-network:
     driver: bridge
+```
+
+
