@@ -152,15 +152,6 @@ cliente.direccion().calle()
   - Publica los logs de la app (si existen) como artifacts.
 - __Estado__: ver badge al inicio del README.
 
-## Imágenes en README (opcional recomendado)
-
-Para asegurar que las imágenes siempre se rendericen:
-- Crea el directorio `docs/assets/` y añade tus capturas allí (por ejemplo, `docs/assets/mongo-insert.png`).
-- Enlaza con rutas relativas en el README:
-  ```markdown
-  ![MongoDB - Inserción](docs/assets/mongo-insert.png)
-  ```
-- Ventajas: no dependes de URLs temporales de `user-attachments` y las imágenes se versionan con el repo.
 
 ## Instalación y Configuración
 

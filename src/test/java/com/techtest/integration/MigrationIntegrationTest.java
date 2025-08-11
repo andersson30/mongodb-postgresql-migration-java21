@@ -117,7 +117,7 @@ public class MigrationIntegrationTest {
                 )
                 """;
 
-            // Crear función upsert_direccion
+            // Crear función upsert_direccion 
             String createUpsertDireccion = """
                 CREATE OR REPLACE FUNCTION upsert_direccion(
                     p_calle VARCHAR(255),
@@ -125,24 +125,24 @@ public class MigrationIntegrationTest {
                     p_pais VARCHAR(100)
                 ) RETURNS INTEGER AS $$
                 DECLARE
-                    direccion_id INTEGER;
+                    v_direccion_id INTEGER;
                 BEGIN
-                    SELECT id INTO direccion_id
+                    SELECT id INTO v_direccion_id
                     FROM direcciones
                     WHERE calle = p_calle AND ciudad = p_ciudad AND pais = p_pais;
                     
-                    IF direccion_id IS NULL THEN
+                    IF v_direccion_id IS NULL THEN
                         INSERT INTO direcciones (calle, ciudad, pais)
                         VALUES (p_calle, p_ciudad, p_pais)
-                        RETURNING id INTO direccion_id;
+                        RETURNING id INTO v_direccion_id;
                     END IF;
                     
-                    RETURN direccion_id;
+                    RETURN v_direccion_id;
                 END;
                 $$ LANGUAGE plpgsql;
                 """;
 
-            // Crear función upsert_cliente
+            // Crear función upsert_cliente (FIXED: usar v_ prefix para variables)
             String createUpsertCliente = """
                 CREATE OR REPLACE FUNCTION upsert_cliente(
                     p_mongo_id VARCHAR(24),
@@ -153,32 +153,56 @@ public class MigrationIntegrationTest {
                     p_pais VARCHAR(100)
                 ) RETURNS INTEGER AS $$
                 DECLARE
-                    cliente_id INTEGER;
-                    direccion_id INTEGER;
-                    existing_cliente_id INTEGER;
+                    v_cliente_id INTEGER;
+                    v_direccion_id INTEGER;
+                    v_existing_cliente_id INTEGER;
                 BEGIN
-                    direccion_id := upsert_direccion(p_calle, p_ciudad, p_pais);
+                    v_direccion_id := upsert_direccion(p_calle, p_ciudad, p_pais);
                     
-                    SELECT id INTO existing_cliente_id
+                    SELECT id INTO v_existing_cliente_id
                     FROM clientes
                     WHERE mongo_id = p_mongo_id;
                     
-                    IF existing_cliente_id IS NOT NULL THEN
+                    IF v_existing_cliente_id IS NOT NULL THEN
                         UPDATE clientes
                         SET nombre = p_nombre,
                             correo = p_correo,
-                            direccion_id = direccion_id,
+                            direccion_id = v_direccion_id,
                             updated_at = CURRENT_TIMESTAMP
-                        WHERE id = existing_cliente_id;
+                        WHERE id = v_existing_cliente_id;
                         
-                        cliente_id := existing_cliente_id;
+                        v_cliente_id := v_existing_cliente_id;
                     ELSE
                         INSERT INTO clientes (mongo_id, nombre, correo, direccion_id)
-                        VALUES (p_mongo_id, p_nombre, p_correo, direccion_id)
-                        RETURNING id INTO cliente_id;
+                        VALUES (p_mongo_id, p_nombre, p_correo, v_direccion_id)
+                        RETURNING id INTO v_cliente_id;
                     END IF;
                     
-                    RETURN cliente_id;
+                    RETURN v_cliente_id;
+                END;
+                $$ LANGUAGE plpgsql;
+                """;
+
+            // Crear función obtener_estadisticas_migracion (MISSING FUNCTION)
+            String createEstadisticasFunction = """
+                CREATE OR REPLACE FUNCTION obtener_estadisticas_migracion()
+                RETURNS TEXT AS $$
+                DECLARE
+                    v_total_clientes INTEGER;
+                    v_total_direcciones INTEGER;
+                    v_total_paises INTEGER;
+                    v_total_ciudades INTEGER;
+                    v_resultado TEXT;
+                BEGIN
+                    SELECT COUNT(*) INTO v_total_clientes FROM clientes;
+                    SELECT COUNT(*) INTO v_total_direcciones FROM direcciones;
+                    SELECT COUNT(DISTINCT pais) INTO v_total_paises FROM direcciones;
+                    SELECT COUNT(DISTINCT ciudad) INTO v_total_ciudades FROM direcciones;
+                    
+                    v_resultado := format('Estadísticas de migración: %s clientes, %s direcciones, %s países, %s ciudades',
+                                         v_total_clientes, v_total_direcciones, v_total_paises, v_total_ciudades);
+                    
+                    RETURN v_resultado;
                 END;
                 $$ LANGUAGE plpgsql;
                 """;
@@ -187,6 +211,7 @@ public class MigrationIntegrationTest {
             conn.prepareStatement(createClientes).execute();
             conn.prepareStatement(createUpsertDireccion).execute();
             conn.prepareStatement(createUpsertCliente).execute();
+            conn.prepareStatement(createEstadisticasFunction).execute();
         }
     }
 
