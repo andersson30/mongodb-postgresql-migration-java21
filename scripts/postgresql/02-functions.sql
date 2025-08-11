@@ -11,27 +11,27 @@ CREATE OR REPLACE FUNCTION upsert_direccion(
     p_pais VARCHAR(100)
 ) RETURNS INTEGER AS $$
 DECLARE
-    direccion_id INTEGER;
+    v_direccion_id INTEGER;
 BEGIN
     -- Buscar dirección existente
-    SELECT id INTO direccion_id
+    SELECT id INTO v_direccion_id
     FROM direcciones
     WHERE calle = p_calle 
       AND ciudad = p_ciudad 
       AND pais = p_pais;
     
     -- Si no existe, crear nueva dirección
-    IF direccion_id IS NULL THEN
+    IF v_direccion_id IS NULL THEN
         INSERT INTO direcciones (calle, ciudad, pais)
         VALUES (p_calle, p_ciudad, p_pais)
-        RETURNING id INTO direccion_id;
+        RETURNING id INTO v_direccion_id;
         
-        RAISE NOTICE 'Nueva dirección creada con ID: %', direccion_id;
+        RAISE NOTICE 'Nueva dirección creada con ID: %', v_direccion_id;
     ELSE
-        RAISE NOTICE 'Dirección existente encontrada con ID: %', direccion_id;
+        RAISE NOTICE 'Dirección existente encontrada con ID: %', v_direccion_id;
     END IF;
     
-    RETURN direccion_id;
+    RETURN v_direccion_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -46,39 +46,39 @@ CREATE OR REPLACE FUNCTION upsert_cliente(
     p_pais VARCHAR(100)
 ) RETURNS INTEGER AS $$
 DECLARE
-    cliente_id INTEGER;
-    direccion_id INTEGER;
-    existing_cliente_id INTEGER;
+    v_cliente_id INTEGER;
+    v_direccion_id INTEGER;
+    v_existing_cliente_id INTEGER;
 BEGIN
     -- Primero, obtener o crear la dirección
-    direccion_id := upsert_direccion(p_calle, p_ciudad, p_pais);
+    v_direccion_id := upsert_direccion(p_calle, p_ciudad, p_pais);
     
     -- Verificar si el cliente ya existe por mongo_id
-    SELECT id INTO existing_cliente_id
+    SELECT id INTO v_existing_cliente_id
     FROM clientes
     WHERE mongo_id = p_mongo_id;
     
-    IF existing_cliente_id IS NOT NULL THEN
+    IF v_existing_cliente_id IS NOT NULL THEN
         -- Cliente existe, actualizar
         UPDATE clientes
         SET nombre = p_nombre,
             correo = p_correo,
-            direccion_id = direccion_id,
+            direccion_id = v_direccion_id,
             updated_at = CURRENT_TIMESTAMP
-        WHERE id = existing_cliente_id;
+        WHERE id = v_existing_cliente_id;
         
-        cliente_id := existing_cliente_id;
-        RAISE NOTICE 'Cliente actualizado con ID: %', cliente_id;
+        v_cliente_id := v_existing_cliente_id;
+        RAISE NOTICE 'Cliente actualizado con ID: %', v_cliente_id;
     ELSE
         -- Cliente no existe, insertar nuevo
         INSERT INTO clientes (mongo_id, nombre, correo, direccion_id)
-        VALUES (p_mongo_id, p_nombre, p_correo, direccion_id)
-        RETURNING id INTO cliente_id;
+        VALUES (p_mongo_id, p_nombre, p_correo, v_direccion_id)
+        RETURNING id INTO v_cliente_id;
         
-        RAISE NOTICE 'Nuevo cliente creado con ID: %', cliente_id;
+        RAISE NOTICE 'Nuevo cliente creado con ID: %', v_cliente_id;
     END IF;
     
-    RETURN cliente_id;
+    RETURN v_cliente_id;
 EXCEPTION
     WHEN unique_violation THEN
         -- Manejar violación de unicidad en correo
@@ -99,7 +99,8 @@ RETURNS TABLE (
     calle VARCHAR(255),
     ciudad VARCHAR(100),
     pais VARCHAR(100),
-    fecha_creacion TIMESTAMP
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -111,7 +112,8 @@ BEGIN
         d.calle,
         d.ciudad,
         d.pais,
-        c.created_at as fecha_creacion
+        c.created_at,
+        c.updated_at
     FROM clientes c
     INNER JOIN direcciones d ON c.direccion_id = d.id
     WHERE d.pais = p_pais
@@ -119,25 +121,37 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Función auxiliar para obtener estadísticas
+-- Función para obtener estadísticas de migración
 CREATE OR REPLACE FUNCTION obtener_estadisticas_migracion()
-RETURNS TABLE (
-    total_clientes BIGINT,
-    total_direcciones BIGINT,
-    paises_unicos BIGINT,
-    ciudades_unicas BIGINT
-) AS $$
+RETURNS TEXT AS $$
+DECLARE
+    v_total_clientes INTEGER;
+    v_total_direcciones INTEGER;
+    v_total_paises INTEGER;
+    v_total_ciudades INTEGER;
+    v_resultado TEXT;
 BEGIN
-    RETURN QUERY
-    SELECT 
-        (SELECT COUNT(*) FROM clientes) as total_clientes,
-        (SELECT COUNT(*) FROM direcciones) as total_direcciones,
-        (SELECT COUNT(DISTINCT pais) FROM direcciones) as paises_unicos,
-        (SELECT COUNT(DISTINCT ciudad) FROM direcciones) as ciudades_unicas;
+    -- Contar clientes
+    SELECT COUNT(*) INTO v_total_clientes FROM clientes;
+    
+    -- Contar direcciones
+    SELECT COUNT(*) INTO v_total_direcciones FROM direcciones;
+    
+    -- Contar países únicos
+    SELECT COUNT(DISTINCT pais) INTO v_total_paises FROM direcciones;
+    
+    -- Contar ciudades únicas
+    SELECT COUNT(DISTINCT ciudad) INTO v_total_ciudades FROM direcciones;
+    
+    -- Construir resultado
+    v_resultado := format('Estadísticas de migración: %s clientes, %s direcciones, %s países, %s ciudades',
+                         v_total_clientes, v_total_direcciones, v_total_paises, v_total_ciudades);
+    
+    RETURN v_resultado;
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para limpiar datos de prueba
+-- Función auxiliar para limpiar datos de prueba
 CREATE OR REPLACE FUNCTION limpiar_datos_prueba()
 RETURNS VOID AS $$
 BEGIN
