@@ -485,7 +485,7 @@ Incluye en el README (debajo de esta sección) o en la sección "Evidencia del d
   - Salida de `SELECT COUNT(*) FROM clientes;` y `SELECT COUNT(*) FROM direcciones;`.
   - Muestra de `SELECT c.nombre, c.correo, d.calle, d.ciudad, d.pais FROM clientes c JOIN direcciones d ON c.direccion_id = d.id LIMIT 5;`.
 
-__Placeholders para imágenes__ (reemplaza las URLs al subir tus capturas):
+__Placeholders para imágenes__ 
 ```markdown
 ![MongoDB - Inserción de documentos](<img width="1160" height="1006" alt="image" src="https://github.com/user-attachments/assets/425aa8f0-6749-4dec-be72-630ef204957c" />
 )
