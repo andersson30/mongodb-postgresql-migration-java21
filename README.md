@@ -485,19 +485,12 @@ Incluye en el README (debajo de esta sección) o en la sección "Evidencia del d
   - Salida de `SELECT COUNT(*) FROM clientes;` y `SELECT COUNT(*) FROM direcciones;`.
   - Muestra de `SELECT c.nombre, c.correo, d.calle, d.ciudad, d.pais FROM clientes c JOIN direcciones d ON c.direccion_id = d.id LIMIT 5;`.
 
-__Placeholders para imágenes__ 
-```markdown
-![MongoDB - Inserción de documentos](<img width="1160" height="1006" alt="image" src="https://github.com/user-attachments/assets/425aa8f0-6749-4dec-be72-630ef204957c" />
-)
-![MongoDB - Listado por país](<img width="582" height="420" alt="image" src="https://github.com/user-attachments/assets/409a5895-e9da-4ade-8319-b2ff4a317108" />
-)
-![MongoDB - Actualización de correo](<img width="728" height="1196" alt="image" src="https://github.com/user-attachments/assets/8070e9a4-2bdd-47f1-93bd-3d13f33cf69c" />
-)
-![Logs - Migración Camel](<img width="2392" height="1108" alt="image" src="https://github.com/user-attachments/assets/b3e8c533-5a4a-45f1-a352-6aa9752cd4d5" />
-)
-![PostgreSQL - Datos migrados](<img width="2016" height="472" alt="image" src="https://github.com/user-attachments/assets/bfa5bbe1-8159-42fc-a02a-e2b8b954a1dd" />
-)
-```
+__Placeholders para imágenes__
+![MongoDB - Inserción de documentos](https://github.com/user-attachments/assets/425aa8f0-6749-4dec-be72-630ef204957c)
+![MongoDB - Listado por país](https://github.com/user-attachments/assets/409a5895-e9da-4ade-8319-b2ff4a317108)
+![MongoDB - Actualización de correo](https://github.com/user-attachments/assets/8070e9a4-2bdd-47f1-93bd-3d13f33cf69c)
+![Logs - Migración Camel](https://github.com/user-attachments/assets/b3e8c533-5a4a-45f1-a352-6aa9752cd4d5)
+![PostgreSQL - Datos migrados](https://github.com/user-attachments/assets/bfa5bbe1-8159-42fc-a02a-e2b8b954a1dd)
 
 ## Instalación y Configuración
 
@@ -752,6 +745,3 @@ volumes:
 networks:
   migration-network:
     driver: bridge
-```
-
-
